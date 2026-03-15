@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ClipMaster – Turn Your Videos Into Viral Shorts</title>
+  <meta name="description" content="Upload any video URL and our AI automatically clips it into engaging shorts ready for TikTok, Instagram Reels, and YouTube Shorts." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0a0a0f;
+      --card: #13131a;
+      --card2: #1a1a24;
+      --border: rgba(255,255,255,0.08);
+      --primary: #e84c75;
+      --primary2: #c33d62;
+      --purple: #8b5cf6;
+      --text: #f4f4f8;
+      --muted: #888998;
+      --success: #22c55e;
+      --error: #ef4444;
+      --input-bg: #0f0f16;
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; min-height: 100vh; }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1rem 3rem;
+      background: rgba(10,10,15,0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo { display: flex; align-items: center; gap: 0.6rem; font-size: 1.25rem; font-weight: 800; }
+    .nav-logo-icon { width: 32px; height: 32px; background: var(--primary); border-radius: 8px; display: grid; place-items: center; font-size: 1rem; }
+    .nav-actions { display: flex; align-items: center; gap: 1rem; }
+    .btn-ghost { background: transparent; border: none; color: var(--text); font-size: 0.9rem; cursor: pointer; padding: 0.5rem 1rem; border-radius: 6px; transition: background 0.2s; font-family: inherit; }
+    .btn-ghost:hover { background: rgba(255,255,255,0.07); }
+    .btn-primary { background: var(--primary); color: white; border: none; padding: 0.55rem 1.25rem; border-radius: 8px; font-weight: 600; font-size: 0.9rem; cursor: pointer; transition: background 0.2s, transform 0.1s; font-family: inherit; }
+    .btn-primary:hover { background: var(--primary2); }
+    .btn-primary:active { transform: scale(0.97); }
+
+    /* ── HERO ── */
+    #landing {
+      padding: 10rem 2rem 6rem;
+      text-align: center;
+      background: radial-gradient(ellipse 80% 40% at 50% 0%, rgba(139,92,246,0.12), transparent);
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      background: rgba(139,92,246,0.15); border: 1px solid rgba(139,92,246,0.3);
+      color: #c4b5fd; padding: 0.35rem 1rem; border-radius: 999px; font-size: 0.8rem; font-weight: 500;
+      margin-bottom: 2rem;
+    }
+    .hero-badge::before { content: '✦'; }
+    h1 { font-size: clamp(2.5rem, 6vw, 4.5rem); font-weight: 900; line-height: 1.1; margin-bottom: 1.5rem; }
+    h1 span { background: linear-gradient(135deg, var(--primary), var(--purple)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .hero-sub { color: var(--muted); font-size: 1.1rem; max-width: 500px; margin: 0 auto 2.5rem; line-height: 1.7; }
+    .hero-actions { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; margin-bottom: 1.25rem; }
+    .btn-hero { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.85rem 2rem; border-radius: 10px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: inherit; border: none; }
+    .btn-hero-primary { background: var(--primary); color: white; }
+    .btn-hero-primary:hover { background: var(--primary2); transform: translateY(-1px); box-shadow: 0 8px 24px rgba(232,76,117,0.35); }
+    .btn-hero-outline { background: transparent; color: var(--text); border: 1px solid var(--border); }
+    .btn-hero-outline:hover { border-color: rgba(255,255,255,0.3); background: rgba(255,255,255,0.04); }
+    .hero-note { color: var(--muted); font-size: 0.82rem; }
+
+    /* ── FEATURES ── */
+    #features { padding: 5rem 2rem; }
+    .section-inner { max-width: 1000px; margin: 0 auto; }
+    .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.5rem; }
+    .feat-card {
+      background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 2rem;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+    .feat-card:hover { transform: translateY(-4px); border-color: rgba(139,92,246,0.3); }
+    .feat-icon { width: 44px; height: 44px; border-radius: 10px; background: rgba(232,76,117,0.15); display: grid; place-items: center; font-size: 1.3rem; margin-bottom: 1.25rem; }
+    .feat-icon.purple { background: rgba(139,92,246,0.15); }
+    .feat-icon.green { background: rgba(34,197,94,0.12); }
+    .feat-card h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem; }
+    .feat-card p { color: var(--muted); font-size: 0.9rem; line-height: 1.6; }
+
+    /* ── AUTH MODAL ── */
+    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 200; align-items: center; justify-content: center; }
+    .modal-overlay.active { display: flex; }
+    .modal-box { background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 2.5rem; width: 90%; max-width: 400px; box-shadow: 0 30px 60px rgba(0,0,0,0.6); }
+    .modal-box h2 { font-size: 1.5rem; font-weight: 800; margin-bottom: 0.4rem; }
+    .modal-box .sub { color: var(--muted); font-size: 0.875rem; margin-bottom: 2rem; }
+    .tabs { display: flex; background: rgba(255,255,255,0.05); border-radius: 8px; padding: 3px; margin-bottom: 1.75rem; }
+    .tab { flex: 1; padding: 0.55rem; text-align: center; border-radius: 6px; cursor: pointer; font-size: 0.875rem; font-weight: 500; color: var(--muted); transition: all 0.2s; }
+    .tab.active { background: var(--primary); color: white; }
+    .form-group { margin-bottom: 1.25rem; }
+    .form-group label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--muted); margin-bottom: 0.4rem; text-transform: uppercase; letter-spacing: 0.05em; }
+    .form-group input { width: 100%; padding: 0.8rem 1rem; background: var(--input-bg); border: 1px solid var(--border); border-radius: 8px; color: white; font-size: 0.95rem; outline: none; font-family: inherit; transition: border-color 0.2s; }
+    .form-group input:focus { border-color: var(--primary); }
+    #auth-submit { width: 100%; padding: 0.85rem; background: var(--primary); color: white; border: none; border-radius: 8px; font-size: 1rem; font-weight: 700; cursor: pointer; transition: background 0.2s; font-family: inherit; margin-top: 0.5rem; }
+    #auth-submit:hover { background: var(--primary2); }
+    #auth-submit:disabled { opacity: 0.5; cursor: not-allowed; }
+    .back-to-home { display: block; text-align: center; margin-top: 1.25rem; color: var(--muted); font-size: 0.85rem; cursor: pointer; transition: color 0.2s; }
+    .back-to-home:hover { color: var(--text); }
+    .back-to-home span { text-decoration: underline; text-underline-offset: 3px; }
+    .auth-msg { margin-top: 1rem; padding: 0.75rem; border-radius: 8px; font-size: 0.875rem; display: none; }
+    .msg-error { display: block; background: rgba(239,68,68,0.1); color: var(--error); border: 1px solid rgba(239,68,68,0.2); }
+    .msg-success { display: block; background: rgba(34,197,94,0.1); color: var(--success); border: 1px solid rgba(34,197,94,0.2); }
+    .modal-close { position: absolute; top: 1rem; right: 1.2rem; background: none; border: none; color: var(--muted); font-size: 1.4rem; cursor: pointer; line-height: 1; }
+
+    /* ── APP DASHBOARD ── */
+    #app { display: none; min-height: 100vh; padding-top: 70px; }
+    .app-header {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0.85rem 2rem;
+      background: rgba(10,10,15,0.9);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .app-header .logo { display: flex; align-items: center; gap: 0.6rem; font-weight: 800; font-size: 1.1rem; }
+    .app-header .logo-icon { width: 28px; height: 28px; background: var(--primary); border-radius: 7px; display: grid; place-items: center; font-size: 0.9rem; }
+    .app-header-right { display: flex; align-items: center; gap: 0.75rem; }
+    .credits-pill { background: rgba(34,197,94,0.12); border: 1px solid rgba(34,197,94,0.25); color: var(--success); padding: 0.4rem 0.85rem; border-radius: 999px; font-size: 0.82rem; font-weight: 700; }
+    .btn-upgrade { background: linear-gradient(135deg, var(--primary), var(--purple)); color: white; border: none; padding: 0.45rem 1rem; border-radius: 7px; font-size: 0.82rem; font-weight: 700; cursor: pointer; font-family: inherit; transition: opacity 0.2s; }
+    .btn-upgrade:hover { opacity: 0.88; }
+    .btn-logout { background: transparent; border: 1px solid rgba(239,68,68,0.4); color: var(--error); padding: 0.4rem 0.9rem; border-radius: 7px; font-size: 0.82rem; cursor: pointer; font-family: inherit; transition: background 0.2s; }
+    .btn-logout:hover { background: rgba(239,68,68,0.08); }
+
+    .app-body { max-width: 960px; margin: 0 auto; padding: 2.5rem 1.5rem; display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; align-items: start; }
+    @media (max-width: 680px) { .app-body { grid-template-columns: 1fr; } }
+
+    .panel { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 1.75rem; }
+    .panel h2 { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.35rem; }
+    .panel .panel-sub { color: var(--muted); font-size: 0.82rem; margin-bottom: 1.5rem; }
+    .input-wrap { margin-bottom: 1.25rem; }
+    .input-wrap label { display: block; font-size: 0.78rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); margin-bottom: 0.45rem; }
+    .input-wrap input { width: 100%; padding: 0.8rem 1rem; background: var(--input-bg); border: 1px solid var(--border); border-radius: 8px; color: white; font-size: 0.95rem; outline: none; font-family: inherit; transition: border-color 0.2s; }
+    .input-wrap input:focus { border-color: var(--primary); }
+    #trigger-btn { width: 100%; padding: 0.85rem; background: var(--primary); color: white; border: none; border-radius: 10px; font-size: 1rem; font-weight: 700; cursor: pointer; transition: background 0.2s, transform 0.1s; font-family: inherit; }
+    #trigger-btn:hover { background: var(--primary2); }
+    #trigger-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    #webhook-status { margin-top: 1rem; padding: 0.85rem; border-radius: 8px; font-size: 0.875rem; display: none; word-break: break-all; }
+    .loader { display: inline-block; width: 0.9rem; height: 0.9rem; border: 2px solid rgba(255,255,255,0.3); border-radius: 50%; border-top-color: #fff; animation: spin 0.8s linear infinite; margin-right: 0.5rem; vertical-align: middle; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .history-panel { grid-column: 1 / -1; }
+    .history-list { list-style: none; max-height: 300px; overflow-y: auto; }
+    .history-item { display: flex; align-items: center; justify-content: space-between; padding: 0.85rem 1rem; background: var(--card2); border-radius: 10px; margin-bottom: 0.6rem; border: 1px solid var(--border); }
+    .hist-url { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 55%; font-size: 0.85rem; color: var(--muted); }
+    .hist-date { font-size: 0.75rem; color: var(--muted); }
+    .hist-dl { background: var(--primary); color: white; padding: 0.3rem 0.75rem; border-radius: 6px; font-size: 0.78rem; font-weight: 700; text-decoration: none; }
+    .hist-dl:hover { background: var(--primary2); }
+    .empty-state { text-align: center; color: var(--muted); font-size: 0.875rem; padding: 2rem 0; }
+
+    /* ── UPGRADE MODAL ── */
+    #upgrade-modal.modal-overlay .modal-box { max-width: 420px; position: relative; }
+    .plan-list { display: flex; flex-direction: column; gap: 1rem; }
+    .plan { background: var(--card2); border: 1px solid var(--border); border-radius: 12px; padding: 1.25rem 1.5rem; cursor: pointer; transition: border-color 0.2s, transform 0.2s; display: flex; justify-content: space-between; align-items: center; }
+    .plan:hover { border-color: var(--primary); transform: translateY(-2px); }
+    .plan-name { font-weight: 700; margin-bottom: 0.2rem; }
+    .plan-desc { font-size: 0.8rem; color: var(--muted); }
+    .plan-price { text-align: right; }
+    .plan-price .amount { font-size: 1.3rem; font-weight: 800; color: var(--primary); }
+    .plan-price .period { font-size: 0.75rem; color: var(--muted); }
+    .plan-credits-tag { font-size: 0.75rem; background: rgba(34,197,94,0.12); color: var(--success); border-radius: 999px; padding: 0.2rem 0.6rem; font-weight: 600; margin-top: 0.3rem; display: inline-block; }
+
+    .hidden { display: none !important; }
+
+    /* Account Modal */
+    .acct-modal .modal-box { max-width: 380px; position: relative; }
+    .acct-avatar { width: 64px; height: 64px; border-radius: 50%; background: linear-gradient(135deg, var(--primary), var(--purple)); display: grid; place-items: center; font-size: 1.6rem; font-weight: 800; margin: 0 auto 1rem; }
+    .acct-email { text-align: center; color: var(--muted); font-size: 0.875rem; margin-bottom: 1.75rem; word-break: break-all; }
+    .acct-row { display: flex; justify-content: space-between; align-items: center; padding: 0.85rem 1rem; background: var(--card2); border-radius: 10px; margin-bottom: 0.6rem; border: 1px solid var(--border); }
+    .acct-label { color: var(--muted); font-size: 0.82rem; }
+    .acct-val { font-weight: 700; font-size: 0.95rem; }
+    .credit-bar-wrap { margin: 0.5rem 0 1.5rem; }
+    .credit-bar-bg { height: 8px; background: rgba(255,255,255,0.07); border-radius: 999px; overflow: hidden; margin-top: 0.35rem; }
+    .credit-bar-fill { height: 100%; background: linear-gradient(90deg, var(--primary), var(--purple)); border-radius: 999px; transition: width 0.6s ease; }
+    .acct-btn-row { display: flex; gap: 0.75rem; margin-top: 1.25rem; }
+    .acct-btn-row button { flex: 1; padding: 0.65rem; border-radius: 8px; font-family: inherit; font-size: 0.875rem; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+    .acct-upgrade { background: linear-gradient(135deg, var(--primary), var(--purple)); color: white; border: none; }
+    .acct-logout { background: transparent; color: var(--error); border: 1px solid rgba(239,68,68,0.35); }
+    .acct-logout:hover { background: rgba(239,68,68,0.08); }
+  </style>
+</head>
+<body>
+
+<!-- ══════════ LANDING ══════════ -->
+<div id="landing-page">
+  <nav>
+    <div class="nav-logo">
+      <div class="nav-logo-icon">✦</div>
+      ClipMaster
+    </div>
+    <div class="nav-actions">
+      <button class="btn-ghost" id="nav-login">Login</button>
+      <button class="btn-primary" id="nav-signup">Get Started</button>
+    </div>
+  </nav>
+
+  <section id="landing" style="min-height:100vh;">
+    <div class="hero-badge">AI-Powered Video Clipping</div>
+    <h1>Turn Your Videos Into<br /><span>Viral Shorts</span></h1>
+    <p class="hero-sub">Upload any video URL and our AI automatically clips it into engaging shorts ready for TikTok, Instagram Reels, and YouTube Shorts.</p>
+    <div class="hero-actions">
+      <button class="btn-hero btn-hero-primary" id="hero-cta">⚡ Start Creating Free</button>
+      <button class="btn-hero btn-hero-outline">▷ Watch Demo</button>
+    </div>
+    <p class="hero-note">No credit card required &nbsp;•&nbsp; 3 free credits to start</p>
+  </section>
+
+  <section id="features">
+    <div class="section-inner">
+      <div class="features-grid">
+        <div class="feat-card">
+          <div class="feat-icon">▣</div>
+          <h3>Easy Upload</h3>
+          <p>Simply paste your video URL from YouTube, Vimeo, or any platform and we handle the rest instantly.</p>
+        </div>
+        <div class="feat-card">
+          <div class="feat-icon purple">✂</div>
+          <h3>AI Clipping</h3>
+          <p>Our AI identifies the best moments and automatically creates multiple short clips optimised for each platform.</p>
+        </div>
+        <div class="feat-card">
+          <div class="feat-icon green">⬇</div>
+          <h3>Instant Download</h3>
+          <p>Download all your clips instantly in the perfect format for any social media platform with one click.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ══════════ AUTH MODAL ══════════ -->
+<div class="modal-overlay" id="auth-modal">
+  <div class="modal-box" style="position:relative;">
+    <button class="modal-close" id="close-auth">✕</button>
+    <h2 id="auth-title">Welcome back</h2>
+    <p class="sub" id="auth-sub">Sign in to your ClipMaster account</p>
+    <div class="tabs">
+      <div class="tab active" id="tab-login">Login</div>
+      <div class="tab" id="tab-signup">Sign Up</div>
+    </div>
+    <form id="auth-form">
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="email-input" placeholder="you@example.com" required />
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="password-input" placeholder="••••••••" required minlength="6" />
+      </div>
+      <button type="submit" id="auth-submit">Login</button>
+    </form>
+    <div class="auth-msg" id="auth-msg"></div>
+    <p class="back-to-home" id="back-to-home">← <span>Back to home</span></p>
+  </div>
+</div>
+
+<!-- ══════════ ACCOUNT MODAL ══════════ -->
+<div class="modal-overlay acct-modal" id="account-modal">
+  <div class="modal-box" style="position:relative;">
+    <button class="modal-close" id="close-account">✕</button>
+    <div class="acct-avatar" id="acct-avatar">R</div>
+    <p class="acct-email" id="acct-email">loading…</p>
+
+    <div class="acct-row">
+      <span class="acct-label">Plan</span>
+      <span class="acct-val" id="acct-plan" style="color:var(--primary);">Free</span>
+    </div>
+    <div class="acct-row">
+      <span class="acct-label">Credits Remaining</span>
+      <span class="acct-val" id="acct-credits">…</span>
+    </div>
+    <div class="credit-bar-wrap">
+      <div style="display:flex;justify-content:space-between;font-size:0.75rem;color:var(--muted);">
+        <span>Credit Usage</span><span id="acct-bar-label">…</span>
+      </div>
+      <div class="credit-bar-bg">
+        <div class="credit-bar-fill" id="acct-bar" style="width:0%"></div>
+      </div>
+    </div>
+    <div class="acct-row">
+      <span class="acct-label">Total Clips Created</span>
+      <span class="acct-val" id="acct-clips">–</span>
+    </div>
+    <div class="acct-row">
+      <span class="acct-label">Member Since</span>
+      <span class="acct-val" id="acct-since">–</span>
+    </div>
+
+    <div class="acct-btn-row">
+      <button class="acct-upgrade" id="acct-upgrade-btn">⚡ Upgrade Plan</button>
+      <button class="acct-logout" id="acct-logout-btn">Logout</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ UPGRADE MODAL ══════════ -->
+<div class="modal-overlay" id="upgrade-modal">
+  <div class="modal-box" style="position:relative;">
+    <button class="modal-close" id="close-upgrade">✕</button>
+    <h2>Upgrade Plan</h2>
+    <p class="sub">Click any plan to instantly add demo credits to your account.</p>
+    <div class="plan-list">
+      <div class="plan" id="plan-pro">
+        <div>
+          <div class="plan-name">Pro</div>
+          <div class="plan-desc">Perfect for casual creators</div>
+          <span class="plan-credits-tag">+ 50 Credits</span>
+        </div>
+        <div class="plan-price">
+          <div class="amount">$9.99</div>
+          <div class="period">/month</div>
+        </div>
+      </div>
+      <div class="plan" id="plan-enterprise">
+        <div>
+          <div class="plan-name">Enterprise</div>
+          <div class="plan-desc">For power users and teams</div>
+          <span class="plan-credits-tag">+ 200 Credits</span>
+        </div>
+        <div class="plan-price">
+          <div class="amount">$29.99</div>
+          <div class="period">/month</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ APP DASHBOARD ══════════ -->
+<div id="app">
+  <header class="app-header">
+    <div class="logo"><div class="logo-icon">✦</div> ClipMaster</div>
+    <div class="app-header-right">
+      <div class="credits-pill">⚡ <span id="credit-count">...</span> Credits</div>
+      <button class="btn-upgrade" id="open-upgrade">Get More</button>
+      <button class="btn-ghost" id="open-account" style="font-size:0.82rem;padding:0.4rem 0.9rem;border:1px solid var(--border);border-radius:7px;">My Account</button>
+      <button class="btn-logout" id="logout-btn">Logout</button>
+    </div>
+  </header>
+
+  <div class="app-body">
+    <!-- Credits Widget + Trigger Panel -->
+    <div class="panel" style="grid-column: 1 / -1;">
+      <!-- Credits Banner -->
+      <div style="display:flex;align-items:center;justify-content:space-between;background:linear-gradient(135deg,rgba(232,76,117,0.12),rgba(139,92,246,0.12));border:1px solid rgba(232,76,117,0.25);border-radius:12px;padding:1.1rem 1.5rem;margin-bottom:1.5rem;">
+        <div>
+          <div style="font-size:0.75rem;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);margin-bottom:0.3rem;">Available Credits</div>
+          <div style="font-size:2.2rem;font-weight:900;line-height:1;background:linear-gradient(135deg,var(--primary),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;"><span id="credit-big">…</span></div>
+          <div style="font-size:0.78rem;color:var(--muted);margin-top:0.3rem;">1 credit per video generated</div>
+        </div>
+        <button class="btn-upgrade" id="open-upgrade" style="padding:0.65rem 1.25rem;font-size:0.875rem;">⚡ Get More Credits</button>
+      </div>
+
+      <h2>New Clip</h2>
+      <p class="panel-sub">Paste a video URL to start generating short clips.</p>
+      <div class="input-wrap">
+        <label>Video URL</label>
+        <input type="url" id="url-input" placeholder="https://youtube.com/watch?v=..." />
+      </div>
+      <button id="trigger-btn">⚡ Generate Clips</button>
+      <div id="webhook-status"></div>
+    </div>
+
+    <!-- History Panel -->
+    <div class="panel history-panel">
+      <h2>Conversion History</h2>
+      <p class="panel-sub">Your last 10 generated clips.</p>
+      <div id="history-loading" class="hidden" style="color:var(--muted);font-size:0.875rem;">Loading…</div>
+      <ul class="history-list" id="history-list"></ul>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+  import { createClient } from '@supabase/supabase-js';
+
+  const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+  const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+  let supabase = null;
+  if (supabaseUrl && supabaseKey) {
+    supabase = createClient(supabaseUrl, supabaseKey);
+  }
+
+  const WEBHOOK_URL = '/webhook/vizard-pull';
+  let currentUser = null;
+  let currentCredits = 0;
+  let isLoginMode = true;
+
+  // Elements
+  const landingPage = document.getElementById('landing-page');
+  const appDiv = document.getElementById('app');
+  const authModal = document.getElementById('auth-modal');
+  const upgradeModal = document.getElementById('upgrade-modal');
+
+  // Auth trigger buttons
+  document.getElementById('nav-login').onclick = () => openAuth(true);
+  document.getElementById('nav-signup').onclick = () => openAuth(false);
+  document.getElementById('hero-cta').onclick = () => openAuth(false);
+  document.getElementById('close-auth').onclick = () => authModal.classList.remove('active');
+  document.getElementById('back-to-home').onclick = () => authModal.classList.remove('active');
+  // Close modal by clicking the dark backdrop
+  authModal.addEventListener('click', (e) => { if (e.target === authModal) authModal.classList.remove('active'); });
+  document.getElementById('close-upgrade').onclick = () => upgradeModal.classList.remove('active');
+  document.getElementById('open-upgrade').onclick = () => upgradeModal.classList.add('active');
+
+  // Account modal
+  const accountModal = document.getElementById('account-modal');
+  document.getElementById('open-account').onclick = () => openAccountModal();
+  document.getElementById('close-account').onclick = () => accountModal.classList.remove('active');
+  document.getElementById('acct-upgrade-btn').onclick = () => { accountModal.classList.remove('active'); upgradeModal.classList.add('active'); };
+  document.getElementById('acct-logout-btn').onclick = async () => { accountModal.classList.remove('active'); if (supabase) await supabase.auth.signOut(); };
+
+  async function openAccountModal() {
+    accountModal.classList.add('active');
+    if (!currentUser) return;
+    const email = currentUser.email || '';
+    const initials = email.charAt(0).toUpperCase();
+    document.getElementById('acct-avatar').textContent = initials;
+    document.getElementById('acct-email').textContent = email;
+    const since = new Date(currentUser.created_at || Date.now()).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
+    document.getElementById('acct-since').textContent = since;
+    document.getElementById('acct-credits').textContent = currentCredits;
+    document.getElementById('acct-bar-label').textContent = `${currentCredits} left`;
+    // bar fill: assume max plan credits of 200 for enterprise, else show out of 5 for free
+    const barPct = Math.min(100, (currentCredits / 5) * 100);
+    document.getElementById('acct-bar').style.width = barPct + '%';
+
+    if (!supabase) return;
+    try {
+      const { data } = await supabase.from('profiles').select('plan_type').eq('id', currentUser.id).single();
+      if (data) document.getElementById('acct-plan').textContent = data.plan_type ? data.plan_type.charAt(0).toUpperCase() + data.plan_type.slice(1) : 'Free';
+      const { data: hist } = await supabase.from('video_conversions').select('id', { count: 'exact' }).eq('user_id', currentUser.id);
+      document.getElementById('acct-clips').textContent = hist?.length ?? 0;
+    } catch {}
+  }
+
+  // Auth tabs
+  document.getElementById('tab-login').onclick = () => setAuthMode(true);
+  document.getElementById('tab-signup').onclick = () => setAuthMode(false);
+
+  function openAuth(login) {
+    setAuthMode(login);
+    authModal.classList.add('active');
+  }
+
+  function setAuthMode(login) {
+    isLoginMode = login;
+    document.getElementById('tab-login').classList.toggle('active', login);
+    document.getElementById('tab-signup').classList.toggle('active', !login);
+    document.getElementById('auth-title').textContent = login ? 'Welcome back' : 'Create account';
+    document.getElementById('auth-sub').textContent = login ? 'Sign in to your ClipMaster account' : 'Start clipping for free today';
+    document.getElementById('auth-submit').textContent = login ? 'Login' : 'Sign Up Free';
+    document.getElementById('auth-msg').className = 'auth-msg';
+  }
+
+  // Auth form
+  document.getElementById('auth-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (!supabase) { showAuthMsg('Supabase not configured.', 'error'); return; }
+    const email = document.getElementById('email-input').value;
+    const password = document.getElementById('password-input').value;
+    const btn = document.getElementById('auth-submit');
+    btn.disabled = true; btn.innerHTML = '<span class="loader"></span> Please wait…';
+    showAuthMsg('', '');
+    try {
+      if (isLoginMode) {
+        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        if (error) throw error;
+      } else {
+        const { error } = await supabase.auth.signUp({ email, password });
+        if (error) throw error;
+        showAuthMsg('Account created! Logging you in…', 'success');
+      }
+    } catch (err) { showAuthMsg(err.message, 'error'); }
+    finally { btn.disabled = false; btn.textContent = isLoginMode ? 'Login' : 'Sign Up Free'; }
+  });
+
+  function showAuthMsg(msg, type) {
+    const el = document.getElementById('auth-msg');
+    el.textContent = msg;
+    el.className = 'auth-msg' + (type === 'error' ? ' msg-error' : type === 'success' ? ' msg-success' : '');
+  }
+
+  // App view toggle
+  function showApp(session) {
+    if (session) {
+      landingPage.style.display = 'none';
+      appDiv.style.display = 'block';
+      authModal.classList.remove('active');
+      loadProfile();
+      loadHistory();
+    } else {
+      landingPage.style.display = 'block';
+      appDiv.style.display = 'none';
+    }
+  }
+
+  // Session management
+  if (supabase) {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      currentUser = session?.user ?? null;
+      showApp(session);
+    });
+    supabase.auth.onAuthStateChange((_e, session) => {
+      currentUser = session?.user ?? null;
+      showApp(session);
+    });
+  } else {
+    showApp(null);
+  }
+
+  // Logout
+  document.getElementById('logout-btn').onclick = async () => {
+    if (supabase) await supabase.auth.signOut();
+  };
+
+  // Load profile / credits
+  async function loadProfile() {
+    if (!supabase || !currentUser) return;
+    try {
+      const { data } = await supabase
+        .from('profiles').select('credits, plan_type').eq('id', currentUser.id).single();
+      if (data) {
+        currentCredits = data.credits;
+        const creditEls = document.querySelectorAll('#credit-count, #credit-big');
+        creditEls.forEach(el => { if (el) el.textContent = currentCredits; });
+      }
+    } catch { /* profile row may not exist yet */ }
+  }
+
+  // Load history
+  async function loadHistory() {
+    if (!supabase || !currentUser) return;
+    const list = document.getElementById('history-list');
+    document.getElementById('history-loading').classList.remove('hidden');
+    list.innerHTML = '';
+    try {
+      const { data } = await supabase.from('video_conversions')
+        .select('*').order('created_at', { ascending: false }).limit(10);
+      if (!data || data.length === 0) {
+        list.innerHTML = '<div class="empty-state">No conversions yet. Paste a URL above to get started!</div>';
+      } else {
+        data.forEach(item => {
+          const date = new Date(item.created_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+          const li = document.createElement('li');
+          li.className = 'history-item';
+          li.innerHTML = `<span class="hist-url" title="${item.original_url}">${item.original_url}</span><span class="hist-date">${date}</span><a class="hist-dl" href="${item.download_url}" target="_blank">Download</a>`;
+          list.appendChild(li);
+        });
+      }
+    } catch { list.innerHTML = '<div class="empty-state" style="color:var(--error)">Failed to load history.</div>'; }
+    finally { document.getElementById('history-loading').classList.add('hidden'); }
+  }
+
+  // Webhook trigger
+  document.getElementById('trigger-btn').addEventListener('click', async () => {
+    const urlValue = document.getElementById('url-input').value.trim();
+    const statusDiv = document.getElementById('webhook-status');
+
+    if (!urlValue) { setStatus('Please enter a URL.', 'error'); return; }
+    try { new URL(urlValue); } catch { setStatus('Please enter a valid URL.', 'error'); return; }
+    if (currentCredits <= 0) { setStatus('Out of credits! Click "Get More" to add credits.', 'error'); return; }
+
+    const btn = document.getElementById('trigger-btn');
+    btn.disabled = true; btn.innerHTML = '<span class="loader"></span> Processing…';
+    setStatus('', '');
+
+    try {
+      // Deduct credit securely via DB
+      if (supabase) {
+        const { data: ok, error: rpcErr } = await supabase.rpc('deduct_credit');
+        if (rpcErr) { setLoading(false); setStatus('Database error: ' + rpcErr.message, 'error'); return; }
+        if (!ok) { setLoading(false); setStatus('Out of credits! Click "Get More Credits" to top up.', 'error'); return; }
+        currentCredits -= 1;
+        updateCreditsUI(currentCredits);
+      }
+
+      const res = await fetch(WEBHOOK_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url: urlValue })
+      });
+
+      if (res.ok) {
+        let downloadUrl = '';
+        let raw = null;
+        try {
+          let d = await res.json(); raw = d;
+          if (Array.isArray(d) && d.length > 0) { d = d[0]; if (d.json) d = d.json; }
+          downloadUrl = d.download || d.downloadUrl || d.url || d.link || d.videoUrl || '';
+          if (typeof d === 'string' && d.startsWith('http')) downloadUrl = d;
+        } catch {}
+
+        if (downloadUrl) {
+          statusDiv.style.display = 'block';
+          statusDiv.className = '';
+          statusDiv.style.background = 'rgba(34,197,94,0.1)';
+          statusDiv.style.border = '1px solid rgba(34,197,94,0.2)';
+          statusDiv.style.borderRadius = '8px';
+          statusDiv.style.padding = '0.85rem';
+          statusDiv.innerHTML = `✅ Clip ready! &nbsp;<a href="${downloadUrl}" target="_blank" style="background:var(--success);color:white;padding:0.3rem 0.75rem;border-radius:6px;text-decoration:none;font-weight:700;font-size:0.875rem;">Download</a>`;
+
+          // Save to DB
+          if (supabase && currentUser) {
+            await supabase.from('video_conversions').insert([{ user_id: currentUser.id, original_url: urlValue, download_url: downloadUrl }]);
+            loadHistory();
+          }
+          document.getElementById('url-input').value = '';
+        } else {
+          setStatus(`Webhook responded but no download URL found. Raw: ${JSON.stringify(raw)?.substring(0, 120)}`, 'error');
+        }
+      } else {
+        let msg = ''; try { const e = await res.json(); msg = e.message || JSON.stringify(e); } catch { msg = await res.text(); }
+        setStatus(`Server error: ${msg.substring(0, 120)}`, 'error');
+      }
+    } catch (err) { setStatus(`Network error: ${err.message}`, 'error'); }
+    finally { btn.disabled = false; btn.innerHTML = '⚡ Generate Clips'; }
+  });
+
+  function setStatus(msg, type) {
+    const el = document.getElementById('webhook-status');
+    if (!msg) { el.style.display = 'none'; return; }
+    el.style.display = 'block';
+    el.textContent = msg;
+    el.style.borderRadius = '8px'; el.style.padding = '0.85rem';
+    if (type === 'error') {
+      el.style.background = 'rgba(239,68,68,0.1)';
+      el.style.border = '1px solid rgba(239,68,68,0.2)';
+      el.style.color = 'var(--error)';
+    } else {
+      el.style.background = 'rgba(34,197,94,0.1)';
+      el.style.border = '1px solid rgba(34,197,94,0.2)';
+      el.style.color = 'var(--success)';
+    }
+  }
+
+  // Shared helper to update all credit display elements
+  function updateCreditsUI(credits) {
+    document.querySelectorAll('#credit-count, #credit-big, #acct-credits').forEach(el => { if (el) el.textContent = credits; });
+    const barEl = document.getElementById('acct-bar');
+    if (barEl) barEl.style.width = Math.min(100, (credits / 5) * 100) + '%';
+    const labelEl = document.getElementById('acct-bar-label');
+    if (labelEl) labelEl.textContent = credits + ' left';
+  }
+
+  // Plan upgrade
+  async function demoUpgrade(amount) {
+    upgradeModal.classList.remove('active');
+    if (!supabase) return;
+
+    // Show a temporary toast-style banner
+    const toast = document.createElement('div');
+    const planName = amount >= 200 ? 'Enterprise' : 'Pro';
+    toast.style.cssText = 'position:fixed;bottom:2rem;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#e84c75,#8b5cf6);color:white;padding:1rem 2rem;border-radius:12px;font-weight:700;z-index:9999;box-shadow:0 10px 30px rgba(0,0,0,0.4);transition:opacity 0.5s;';
+    toast.textContent = '⏳ Upgrading to ' + planName + '...';
+    document.body.appendChild(toast);
+
+    try {
+      const { error } = await supabase.rpc('add_credits', { amount });
+      if (error) throw error;
+
+      // Fetch fresh profile to get the new credits + plan
+      const { data } = await supabase.from('profiles').select('credits, plan_type').eq('id', currentUser.id).single();
+      if (data) {
+        currentCredits = data.credits;
+        updateCreditsUI(currentCredits);
+        const planEl = document.getElementById('acct-plan');
+        if (planEl) planEl.textContent = data.plan_type.charAt(0).toUpperCase() + data.plan_type.slice(1);
+      }
+
+      toast.textContent = '✅ Upgraded to ' + planName + '! +' + amount + ' credits added.';
+      setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 500); }, 3000);
+    } catch (err) {
+      toast.style.background = '#ef4444';
+      toast.textContent = '❌ Upgrade failed: ' + err.message;
+      setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 500); }, 3000);
+    }
+  }
+  document.getElementById('plan-pro').onclick = () => demoUpgrade(50);
+  document.getElementById('plan-enterprise').onclick = () => demoUpgrade(200);
+</script>
+</body>
+</html>
