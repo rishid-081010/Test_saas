@@ -376,13 +376,18 @@
 </div>
 
 <script type="module">
-  import { createClient } from '@supabase/supabase-js';
+  // Use CDN import to ensure it works even if the build step is skipped
+  import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
-  const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-  const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
   let supabase = null;
-  if (supabaseUrl && supabaseKey) {
-    supabase = createClient(supabaseUrl, supabaseKey);
+  try {
+    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+    const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+    if (supabaseUrl && supabaseKey) {
+      supabase = createClient(supabaseUrl, supabaseKey);
+    }
+  } catch (err) {
+    console.warn('Supabase initialization failed:', err);
   }
 
   const WEBHOOK_URL = import.meta.env.DEV ? '/webhook/vizard-pull' : 'https://elevyx2x.app.n8n.cloud/webhook/vizard-pull';
