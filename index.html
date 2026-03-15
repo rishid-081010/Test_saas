@@ -385,7 +385,7 @@
     supabase = createClient(supabaseUrl, supabaseKey);
   }
 
-  const WEBHOOK_URL = '/webhook/vizard-pull';
+  const WEBHOOK_URL = import.meta.env.DEV ? '/webhook/vizard-pull' : 'https://elevyx2x.app.n8n.cloud/webhook/vizard-pull';
   let currentUser = null;
   let currentCredits = 0;
   let isLoginMode = true;
